@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Form</title>
+</head>
+<body>
+<h1>Add a New Product</h1>
+<form id="productForm">
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" required><br><br>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" required><br><br>
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" step="0.01" required><br><br>
+
+    <form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload">
+        <label for="image">Upload Image:</label>
+        <input type="file" name="image" id="imageInput" placeholder="Upload legible scan of assignment" required><br><br>
+    </form>
+
+    <button type="submit">Add Product</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+document.getElementById('productForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const productName = document.getElementById('productName').value;
+    const quantity = document.getElementById('quantity').value;
+    const price = document.getElementById('price').value;
+
+    const uploadForm = document.getElementById('uploadForm');
+    const formData = new FormData(uploadForm);
+    formData.append('productName', productName);
+    formData.append('quantity', quantity);
+    formData.append('price', price);
+
+    try {
+        const response = await fetch('http://localhost:3000/api/products', {
+            method: 'POST',
+            body: formData
+        });
+
+        const responseData = await response.json();
+
+        document.getElementById('message').innerText = responseData.message;
+    } catch (error) {
+        document.getElementById('message').innerText = 'Error adding product. Please try again.';
+    }
+});
+</script>
+
+
+<!-- https://www.paypal.com/ncp/payment/T8RW5KKRVAUD6 -->
+
+<script src="https://www.paypal.com/sdk/js?client-id=BAAcafdj0igjedCf8ChRWIDCqSnvtdoU4FNKHgejHDnl5XIUn_wrfrflNwAmlFbvwITOHBISYjPB_EYV6o&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+<div id="paypal-container-T8RW5KKRVAUD6"></div>
+<script>
+  paypal.HostedButtons({
+    hostedButtonId: "T8RW5KKRVAUD6",
+  }).render("#paypal-container-T8RW5KKRVAUD6")
+</script>
+
+<img src="../frontend/pictures/Student Assist-qrcode.png" alt="Paypal Payment QR Code">
+
+</body>
+</html>
